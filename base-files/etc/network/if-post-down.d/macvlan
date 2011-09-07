@@ -1,0 +1,7 @@
+#!/bin/sh
+
+[ "$VERBOSITY" = 1 ] && set -x
+
+if [ -n "${IF_MACVLAN_RAW_DEVICE}" ]; then
+	ip link delete "${IFACE}"
+fi

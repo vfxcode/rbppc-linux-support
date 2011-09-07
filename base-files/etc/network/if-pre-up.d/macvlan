@@ -1,0 +1,24 @@
+#!/bin/sh
+
+[ "$VERBOSITY" = 1 ] && set -x
+
+modprobe_if_necessary() {
+	if [ ! -f "/sys/module/macvlan" ]; then
+		modprobe macvlan || exit 1
+	fi
+}
+
+if [ -n "${IF_MACVLAN_RAW_DEVICE}" ]; then
+	modprobe_if_necessary
+
+	IF_MACVLAN_ETHER=${IF_MACVLAN_ETHER:-auto}
+	IF_MACVLAN_MODE=${IF_MACVLAN_MODE:-vepa}
+	case "${IF_MACVLAN_ETHER}" in
+		auto)
+			ip link add link "${IF_MACVLAN_RAW_DEVICE}" name "${IFACE}" type macvlan mode "${IF_MACVLAN_MODE}" || exit 1
+			;;
+		*)
+			ip link add link "${IF_MACVLAN_RAW_DEVICE}" name "${IFACE}" address "${IF_MACVLAN_ETHER}" type macvlan mode "${IF_MACVLAN_MODE}" || exit 1
+			;;
+	esac
+fi

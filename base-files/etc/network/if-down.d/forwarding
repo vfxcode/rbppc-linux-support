@@ -1,0 +1,11 @@
+#! /bin/sh
+
+if [ -n "${IF_FORWARDING}" ] && [ "${IF_FORWARDING}" = "auto" ]; then
+	[ "${ADDRFAM}" = "inet" ] && FORWARDING_TYPE=ipv4
+	[ "${ADDRFAM}" = "inet6" ] && FORWARDING_TYPE=ipv6
+
+	[ -z "${FORWARDING_TYPE}" ] && exit 0
+	FORWARDING="/proc/sys/net/${FORWARDING_TYPE}/conf/${IFACE}/forwarding"
+
+	echo 0 >"${FORWARDING}" || exit 1
+fi
