@@ -24,6 +24,7 @@ It is also possible to give the kernel extra parameters that are merged with the
 ## Debian 8/9 Initial Setup
 
 This is a two stage process using either debootstrap or cdebootstrap
+
 1. On an other machine that can read/write CompactFlash cards
   a. Create a VERY basic debian installation that has the bare minimum and the packages in the /debootstrap folder.
   b. Configure fstab, hostname and network interfaces
