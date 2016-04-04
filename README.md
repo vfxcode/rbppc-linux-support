@@ -26,10 +26,15 @@ It is also possible to give the kernel extra parameters that are merged with the
 This is a two stage process using either debootstrap or cdebootstrap
 
 1. On an other machine that can read/write CompactFlash cards
+
   a. Create a VERY basic debian installation that has the bare minimum and the packages in the /debootstrap folder.
+
   b. Configure fstab, hostname and network interfaces
+
 2. On the routerboard
+
   a. On the first boot redirect init to /bin/sh and run the actuall package installation
+
   b. Reboot and install the rest of the needed packages
 
 sudo debootstrap --foreign --arch powerpc stretch chroot/ http://httpredir.debian.org/debian/
