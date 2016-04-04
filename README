@@ -1,16 +1,18 @@
-= Introduction
+# Introduction
 
 This repository is a collection of resources for installing linux on PowerPC based routerboards (RB333,RB600,RB800).
 Unfortunatly I only own an RB600 as such that is my only test bed.
 
 
-= Partitioning
+# Partitioning
 
 RouterBOOT when setup to boot it will try to load a kernel by executing the partition with type 0x27 as a kernel image.
 There does not seem to be a way to use initrd, as such some modules must be build in to the kernel image.
 Also kernel must not be above a certain size or it will not boot. (4MB uncompressed??)
 
-= Debian 8/9 Initial Setup
+# Installing linux distributions
+
+## Debian 8/9 Initial Setup
 
 sudo debootstrap --foreign --arch powerpc stretch chroot/ http://httpredir.debian.org/debian/
 sudo echo "/dev/sda2 / ext4 defaults 0 0" > chroot/etc/fstab
