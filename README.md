@@ -28,13 +28,19 @@ This is a two stage process using either debootstrap or cdebootstrap
 1. On an other machine that can read/write CompactFlash cards
   1. Create a VERY basic debian installation that has the bare minimum and the packages in the /debootstrap folder.
   2. Configure fstab, hostname and network interfaces
+  3. Install the kernel modules
 2. On the routerboard
   1. On the first boot redirect init to /bin/sh and run the actuall package installation
   2. Reboot and install the rest of the needed packages
 
+```
+# First stage deboot strap
 sudo debootstrap --foreign --arch powerpc stretch chroot/ http://httpredir.debian.org/debian/
+# Configure root filesystem
 sudo echo "/dev/sda2 / ext4 defaults 0 0" > chroot/etc/fstab
+# Configure the hostname
 sudo echo "<device-fqdn>" > /etc/hostname
+# Configure loopback and one network interface
 sudo cat >> /etc/network/interfaces  <<EOF
 auto lo
 iface lo inet loopback
@@ -42,16 +48,20 @@ iface lo inet loopback
 auto eth0
 iface eth0 inet dhcp
 EOF
+# Copy kernel modules
 sudo cp -a <modules_dir> chroot/lib/ 
-
+```
 
 And on the device boot with `init=/bin/sh` as a kernel parameter for the first time and do the following:
 
+```
+# Filesystem is read-only so remount read-write
 mount -o remount,rw /
+# Run debootstrap second stage
 LC_ALL=C LANGUAGE=C LANG=C /debootstrap/debootstrap --second-stage
-
-
-Set networking up 
+# Connect to the internet
 ifup eth0
+# Install a few packages to make our life easier
 apt-get update
 apt-get install locales openssh-server bash-completion
+```
