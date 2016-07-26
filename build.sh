@@ -6,9 +6,9 @@ PATCHDIR="${WORKDIR}/patches"
 KERNELFILE="${TREEDIR}/arch/powerpc/boot/dtbImage.rb600.elf"
 CONFIGBACKUP="${WORKDIR}/configs/rb600.$(date +%Y%m%d.%H%M%S).config"
 KERNELPARAMETERS="root=/dev/sda2"
-TARGETUSER="vfxcode"
-TARGETHOST="10.29.88.3"
-TARGETDIR="~/rb600"
+TARGETUSER="root"
+TARGETHOST="10.29.88.107"
+TARGETDIR="/lib/modules"
 CONCJ=5
 
 export ARCH=powerpc
@@ -77,19 +77,26 @@ function install() {
   fi
 
   echo "Copying modules to target board"
-  rsync -a "${OUTDIR}/lib/" ${TARGETUSER}@${TARGETHOST}:${TARGETDIR}/lib/
-  RT=$?
-  if [ $RT -ne 0 ] ; then
-    echo "Could not copy modules to host"
-    exit
-  fi
+  for modules in ${OUTDIR}/lib/modules/* ; do
+    rsync -a "${modules}" ${TARGETUSER}@${TARGETHOST}:${TARGETDIR}/
+    RT=$?
+    if [ $RT -ne 0 ] ; then
+      echo "Could not copy modules ($modules) to host"
+      exit
+    fi
+  done
+  ssh ${TARGETUSER}@${TARGETHOST} chown -R root:root ${TARGETDIR}
+  echo "dd if=${TARGETDIR} of=/dev/sda1 bs=512k"
+}
 
-  echo "dd if=/tmp/vmlinux of=/dev/sda1 bs=512k"
+function configure() {
+  make menuconfig
 }
 
 case $1 in
   build) build ;;
   install) install;;
+  configure) configure;;
   *) exit ;;
 esac
 
