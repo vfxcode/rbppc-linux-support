@@ -31,6 +31,10 @@ function build () {
     echo "  Current config here ${CONFIGBACKUP}"
   fi
 
+  if [ ! -e .scmversion ] ; then
+    touch .scmversion
+  fi
+
   echo "Building kernel"
 
   make -j $CONCJ
